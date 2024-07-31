@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: vakhaboff
+      POSTGRES_DB: shaxboz
+    volumes:
+      - ./init_db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+  migrate:
+    image: migrate/migrate
+    container_name: migrate
+    command: [
+      "-path", "/migrations",
+      "-database", "postgres://postgres:vakhaboff@db:5432/shaxboz?sslmode=disable",
+      "up"
+    ]
+    volumes:
+      - ./migrations:/migrations
+    depends_on:
+      - db
